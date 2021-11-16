@@ -15,10 +15,12 @@ import "../../services/EnderecoService";
 import "../../clients/CepClient";
 import "../../infra/http/AxiosHttpClient";
 import { CompanyRepository } from "repositories/CompanyRepository";
+import { TripRepository } from "repositories/TripRepository";
 
 const createDependencyInjector = () => {
   Container.set("UserRepository", getCustomRepository(UserRepository));
   Container.set("CompanyRepository", getCustomRepository(CompanyRepository));
+  Container.set("TripRepository", getCustomRepository(TripRepository));
 };
 
 export default createDependencyInjector;

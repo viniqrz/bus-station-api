@@ -1,5 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  ManyToMany,
+} from "typeorm";
+
 import { Company } from "./CompanyEntity";
+import { Trip } from "./TripEntity";
 
 @Entity()
 export class User {
@@ -23,4 +31,7 @@ export class User {
 
   @ManyToOne(() => Company, (company) => company.employees, { nullable: true })
   company: Company;
+
+  @ManyToMany(() => Trip, (trip) => trip.users, { cascade: true })
+  trips: Trip[];
 }

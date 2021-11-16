@@ -1,5 +1,13 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToOne,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Company } from "./CompanyEntity";
+import { User } from "./UserEntity";
 
 @Entity()
 export class Trip {
@@ -23,4 +31,8 @@ export class Trip {
 
   @ManyToOne(() => Company, (company) => company.trips)
   company: Company;
+
+  @ManyToMany(() => User, (user) => user.trips, { cascade: true })
+  @JoinTable()
+  users: User[];
 }

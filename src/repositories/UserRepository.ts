@@ -8,6 +8,6 @@ export class UserRepository
   implements IUserRepository
 {
   public async findByEmail(email: string): Promise<User> {
-    return this.findOne({ where: { email } });
+    return this.findOne({ where: { email }, relations: ["company"] });
   }
 }

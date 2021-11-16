@@ -1,21 +1,21 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { verifyJwt } from "helpers/verifyJwt";
 import { JwtPayload } from "jsonwebtoken";
+import { IRequest } from "../@types/express/request";
 
-export function ensureAuth(req: Request, res: Response, next: NextFunction) {
+export function ensureIsAuth(req: IRequest, res: Response, next: NextFunction) {
   try {
     const bearer = req.headers.authorization;
-    const { user_id } = req.query;
 
     if (!bearer) throw new Error("No token sent");
 
     const [, token] = bearer.split(" ");
 
     const { data } = verifyJwt(token) as JwtPayload;
+    req.user = data;
 
-    const isAuthenticated = user_id === data.id;
-
-    if (!isAuthenticated) throw new Error("Invalid credentials");
+    const isAdmin = req.user.role === "admin";
+    if (!isAdmin) throw new Error("User is not admin");
 
     return next();
   } catch (err) {

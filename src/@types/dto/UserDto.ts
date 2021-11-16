@@ -1,3 +1,5 @@
+import { Company } from "models/CompanyEntity";
+
 export interface UserDTO {
   id: number;
   email: string;
@@ -14,5 +16,5 @@ export type UserWithoutPassword = {
   firstName: string;
   lastName: string;
   role: "passenger" | "admin" | "employee";
-  companyId?: number;
+  company: Company;
 };

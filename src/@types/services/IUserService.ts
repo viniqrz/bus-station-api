@@ -7,6 +7,9 @@ export interface IUserService {
   create(usuarioDto: UserDTO): Promise<User>;
   update(id: number, usuarioDto: UserDTO): Promise<void>;
   remove(id: number): Promise<void>;
+  createPassenger(userDto: UserDTO): Promise<UserWithoutPassword>;
+  createEmployee(userDto: UserDTO): Promise<UserWithoutPassword>;
+  createAdmin(userDto: UserDTO): Promise<UserWithoutPassword>;
   signup(userDto: UserDTO): Promise<UserWithoutPassword>;
   authenticate(
     email: string,

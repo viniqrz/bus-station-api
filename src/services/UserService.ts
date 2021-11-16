@@ -1,12 +1,12 @@
-import { Inject, Service } from "typedi";
+import { IUserRepository } from "../@types/repositories/IUserRepository";
 import { UserDTO, UserWithoutPassword } from "../@types/dto/UserDto";
 import { IUserService } from "../@types/services/IUserService";
-import { IUserRepository } from "../@types/repositories/IUserRepository";
-import { User } from "models/UserEntity";
-import { compare, hash } from "bcrypt";
 import { serviceFactory } from "helpers/serviceFactory";
-import { sign } from "jsonwebtoken";
 import { generateJwt } from "helpers/generateJwt";
+import { User } from "models/UserEntity";
+import Container, { Inject, Service } from "typedi";
+import { compare, hash } from "bcrypt";
+import { CompanyService } from "./CompanyService";
 
 @Service("UserService")
 export class UserService implements IUserService {
@@ -16,30 +16,62 @@ export class UserService implements IUserService {
     @Inject("UserRepository") private userRepository: IUserRepository
   ) {}
 
-  async signup(userDto: UserDTO): Promise<UserWithoutPassword> {
+  public async createAdmin(userDto: UserDTO): Promise<UserWithoutPassword> {
     try {
-      const { email, password } = userDto;
+      const dtoIsAdmin = userDto.role === "admin";
 
-      const userAlreadyExists = await this.userRepository.findByEmail(email);
-      if (userAlreadyExists) throw new Error("User already exists");
+      if (!dtoIsAdmin) throw new Error("user sent is not admin");
 
-      const hashedPassword = await hash(password, 8);
-
-      const user = await this.userFactory({
-        ...userDto,
-        password: hashedPassword,
-      });
-
-      const savedUser = await this.create(user);
-      const userWithoutPassword = this.omitPassword(savedUser);
-
-      return userWithoutPassword;
+      return await this.signup(userDto);
     } catch (err) {
       throw new Error(`Couldn't create user: ${err.message}.`);
     }
   }
 
-  async authenticate(
+  public async createEmployee(userDto: UserDTO): Promise<UserWithoutPassword> {
+    try {
+      const isEmployee = userDto.role === "employee";
+
+      if (!isEmployee) throw new Error("user sent is not employee");
+
+      return await this.signup(userDto);
+    } catch (err) {
+      throw new Error(`Couldn't create user: ${err.message}.`);
+    }
+  }
+
+  public async createPassenger(userDto: UserDTO): Promise<UserWithoutPassword> {
+    try {
+      const isPassenger = userDto.role === "passenger";
+
+      if (!isPassenger) throw new Error("user sent is not passenger");
+
+      return await this.signup(userDto);
+    } catch (err) {
+      throw new Error(`Couldn't create user: ${err.message}.`);
+    }
+  }
+
+  public async signup(userDto: UserDTO): Promise<UserWithoutPassword> {
+    const { email, password } = userDto;
+
+    const userAlreadyExists = await this.userRepository.findByEmail(email);
+    if (userAlreadyExists) throw new Error("User already exists");
+
+    const hashedPassword = await hash(password, 8);
+
+    const user = await this.userFactory({
+      ...userDto,
+      password: hashedPassword,
+    });
+
+    const savedUser = await this.create(user);
+    const userWithoutPassword = this.omitPassword(savedUser);
+
+    return userWithoutPassword;
+  }
+
+  public async authenticate(
     email: string,
     password: string
   ): Promise<{ user: UserWithoutPassword; token: string }> {
@@ -66,9 +98,12 @@ export class UserService implements IUserService {
     user.lastName = userDto.lastName;
     user.email = userDto.email;
     user.password = userDto.password;
+    user.company = null;
 
     if (userDto.role === "employee") {
-      user.company = await serviceFactory.company().get(userDto.companyId);
+      const companyService = Container.get<CompanyService>("CompanyService");
+
+      user.company = await companyService.get(userDto.companyId);
     }
 
     return user;
