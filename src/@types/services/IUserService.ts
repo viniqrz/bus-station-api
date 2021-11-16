@@ -1,10 +1,15 @@
-import { UserDTO } from "../dto/UserDto";
+import { UserDTO, UserWithoutPassword } from "../dto/UserDto";
 import { User } from "../../models/UserEntity";
 
 export interface IUserService {
-  listar(): Promise<User[]>;
-  buscar(id: number): Promise<User>;
-  criar(usuarioDto: UserDTO): Promise<User>;
-  atualizar(id: number, usuarioDto: UserDTO): Promise<void>;
-  remover(id: number): Promise<void>;
+  getAll(): Promise<User[]>;
+  get(id: number): Promise<User>;
+  create(usuarioDto: UserDTO): Promise<User>;
+  update(id: number, usuarioDto: UserDTO): Promise<void>;
+  remove(id: number): Promise<void>;
+  signup(userDto: UserDTO): Promise<UserWithoutPassword>;
+  authenticate(
+    email: string,
+    password: string
+  ): Promise<{ user: UserWithoutPassword; token: string }>;
 }
