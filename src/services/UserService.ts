@@ -1,12 +1,11 @@
 import { IUserRepository } from "../@types/repositories/IUserRepository";
 import { UserDTO, UserWithoutPassword } from "../@types/dto/UserDto";
 import { IUserService } from "../@types/services/IUserService";
-import { serviceFactory } from "helpers/serviceFactory";
+import Container, { Inject, Service } from "typedi";
+import { CompanyService } from "./CompanyService";
 import { generateJwt } from "helpers/generateJwt";
 import { User } from "models/UserEntity";
-import Container, { Inject, Service } from "typedi";
 import { compare, hash } from "bcrypt";
-import { CompanyService } from "./CompanyService";
 
 @Service("UserService")
 export class UserService implements IUserService {
@@ -91,6 +90,38 @@ export class UserService implements IUserService {
     }
   }
 
+  public async getAll() {
+    return this.userRepository.find();
+  }
+
+  public async getById(id: number): Promise<UserWithoutPassword> {
+    return this.omitPassword(await this.userRepository.findOne(id));
+  }
+
+  public async create(userDto: User) {
+    return this.userRepository.save(userDto);
+  }
+
+  public async update(id: number, userDto: UserDTO) {
+    await this.userRepository.save({ ...userDto, id });
+  }
+
+  public async delete(id: number) {
+    const userToRemove = await this.userRepository.findOne(id);
+
+    if (!userToRemove) {
+      throw new Error("User not found!");
+    }
+
+    await this.userRepository.remove(userToRemove);
+  }
+
+  private omitPassword(user: User): UserWithoutPassword {
+    const { password, ...userWithoutPassword } = user;
+
+    return userWithoutPassword;
+  }
+
   private async userFactory(userDto: UserDTO): Promise<User> {
     const user = new User();
 
@@ -103,40 +134,9 @@ export class UserService implements IUserService {
     if (userDto.role === "employee") {
       const companyService = Container.get<CompanyService>("CompanyService");
 
-      user.company = await companyService.get(userDto.companyId);
+      user.company = await companyService.getById(userDto.companyId);
     }
 
     return user;
-  }
-
-  private omitPassword(user: User): UserWithoutPassword {
-    const { password, ...userWithoutPassword } = user;
-
-    return userWithoutPassword;
-  }
-
-  async getAll() {
-    return this.userRepository.find();
-  }
-
-  async get(id: number) {
-    return this.userRepository.findOne(id);
-  }
-
-  async create(userDto: User) {
-    return this.userRepository.save(userDto);
-  }
-
-  async update(id: number, userDto: UserDTO) {
-    await this.userRepository.save({ ...userDto, id });
-  }
-
-  async remove(id: number) {
-    const userToRemove = await this.userRepository.findOne(id);
-    if (!userToRemove) {
-      throw new Error("User not found!");
-    }
-
-    await this.userRepository.remove(userToRemove);
   }
 }

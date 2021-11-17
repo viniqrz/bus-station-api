@@ -3,7 +3,7 @@ import { verifyJwt } from "helpers/verifyJwt";
 import { JwtPayload } from "jsonwebtoken";
 import { IRequest } from "../@types/express/request";
 
-export function ensureIsColleague(
+export function ensureIsColleagueOrAdmin(
   req: IRequest,
   res: Response,
   next: NextFunction
@@ -18,12 +18,16 @@ export function ensureIsColleague(
     req.user = data;
 
     const isEmployee = data.role === "employee";
-    if (!isEmployee) throw new Error("You are not an employee");
+    const isAdmin = data.role === "admin";
+
+    if (!isEmployee && !isAdmin) throw new Error("You arent employee or admin");
 
     const { user } = req.body;
 
-    const isColleague = user.companyId === req.user.company.id;
-    if (!isColleague) throw new Error("User sent belongs to another company");
+    if (isEmployee) {
+      const isColleague = user.companyId === req.user.company.id;
+      if (!isColleague) throw new Error("User sent belongs to another company");
+    }
 
     return next();
   } catch (err) {

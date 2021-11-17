@@ -6,6 +6,7 @@ export interface ITripRepository {
   save(trip: Trip): Promise<Trip>;
   findAll(queryObj: TripQueryDTO): Promise<Trip[]>;
   findById(id: number): Promise<Trip>;
+  remove(trip: Trip): Promise<Trip>;
 }
 
 @EntityRepository(Trip)

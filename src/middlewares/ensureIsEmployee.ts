@@ -20,11 +20,11 @@ export function ensureIsColleague(
     const isEmployee = data.role === "employee";
     if (!isEmployee) throw new Error("You are not an employee");
 
-    const { companyId } = req.params;
+    // const { companyId } = req.params;
 
-    const worksAtCompany = Number(companyId) === req.user.company.id;
-    if (!worksAtCompany)
-      throw new Error("Trip sent belongs to another company");
+    // const worksAtCompany = Number(companyId) === req.user.company.id;
+    // if (!worksAtCompany)
+    //   throw new Error("Trip sent belongs to another company");
 
     return next();
   } catch (err) {

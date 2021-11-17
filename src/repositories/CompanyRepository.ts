@@ -3,6 +3,9 @@ import { EntityRepository, Repository } from "typeorm";
 
 export interface ICompanyRepository {
   findById(id: number): Promise<Company>;
+  find(): Promise<Company[]>;
+  save(company: Company): Promise<Company>;
+  remove(company: Company): Promise<Company>;
 }
 
 @EntityRepository(Company)

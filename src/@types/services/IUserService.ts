@@ -3,10 +3,10 @@ import { User } from "../../models/UserEntity";
 
 export interface IUserService {
   getAll(): Promise<User[]>;
-  get(id: number): Promise<User>;
+  getById(id: number): Promise<UserWithoutPassword>;
   create(usuarioDto: UserDTO): Promise<User>;
   update(id: number, usuarioDto: UserDTO): Promise<void>;
-  remove(id: number): Promise<void>;
+  delete(id: number): Promise<void>;
   createPassenger(userDto: UserDTO): Promise<UserWithoutPassword>;
   createEmployee(userDto: UserDTO): Promise<UserWithoutPassword>;
   createAdmin(userDto: UserDTO): Promise<UserWithoutPassword>;

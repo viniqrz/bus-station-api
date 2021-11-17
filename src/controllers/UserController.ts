@@ -2,12 +2,17 @@ import Container, { Inject, Service } from "typedi";
 import { NextFunction, Request, Response } from "express";
 import { IUserService } from "../@types/services/IUserService";
 import { UserService } from "services/UserService";
+import { IRequest } from "../@types/express/request";
 
 @Service("UserController")
 export class UserController {
   constructor(@Inject("UserService") private userService: IUserService) {}
 
-  public async createEmployee(req: Request, res: Response, next: NextFunction) {
+  public async createEmployee(
+    req: IRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { user } = req.body;
 
@@ -24,13 +29,11 @@ export class UserController {
     }
   }
 
-  public async createAdmin(req: Request, res: Response, next: NextFunction) {
+  public async createAdmin(req: IRequest, res: Response, next: NextFunction) {
     try {
       const { user } = req.body;
 
-      const userService = Container.get<UserService>("UserService");
-
-      const userWithoutPassword = await userService.createAdmin(user);
+      const userWithoutPassword = await this.userService.createAdmin(user);
 
       res.status(200).json({
         status: "success",
@@ -44,16 +47,14 @@ export class UserController {
   }
 
   public async createPassenger(
-    req: Request,
+    req: IRequest,
     res: Response,
     next: NextFunction
   ) {
     try {
       const { user } = req.body;
 
-      const userService = Container.get<UserService>("UserService");
-
-      const userWithoutPassword = await userService.createPassenger(user);
+      const userWithoutPassword = await this.userService.createPassenger(user);
 
       res.status(200).json({
         status: "success",
@@ -66,13 +67,14 @@ export class UserController {
     }
   }
 
-  public async authenticate(req: Request, res: Response, next: NextFunction) {
+  public async authenticate(req: IRequest, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
 
-      const userService = Container.get<UserService>("UserService");
-
-      const { user, token } = await userService.authenticate(email, password);
+      const { user, token } = await this.userService.authenticate(
+        email,
+        password
+      );
 
       res.status(200).json({
         status: "success",
@@ -86,31 +88,62 @@ export class UserController {
     }
   }
 
-  // async list(request: Request, response: Response) {
-  //   const users = await this.userService.listar();
-  //   response.send(users);
-  // }
+  public async getAll(req: IRequest, res: Response, next: NextFunction) {
+    try {
+      const users = await this.userService.getAll();
 
-  // async get(request: Request, response: Response) {
-  //   const user = await this.userService.buscar(Number(request.params.id));
-  //   response.send(user);
-  // }
+      res.status(200).json({
+        status: "success",
+        data: users,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 
-  // async create(request: Request, response: Response) {
-  //   const user = await this.userService.criar(request.body);
-  //   response.send(user);
-  // }
+  public async getById(req: IRequest, res: Response, next: NextFunction) {
+    try {
+      const { userId } = req.params;
 
-  // async update(request: Request, response: Response) {
-  //   const user = await this.userService.atualizar(
-  //     Number(request.params.id),
-  //     request.body
-  //   );
-  //   response.send(user);
-  // }
+      const user = await this.userService.getById(Number(userId));
 
-  // async remove(request: Request, response: Response) {
-  //   await this.userService.remover(Number(request.params.id));
-  //   response.send();
-  // }
+      res.status(200).json({
+        status: "success",
+        data: { user },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public async update(req: IRequest, res: Response, next: NextFunction) {
+    try {
+      const { userId } = req.params;
+      const { user } = req.body;
+
+      const updatedUser = await this.userService.update(Number(userId), user);
+
+      res.status(200).json({
+        status: "success",
+        data: { user: updatedUser },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public async delete(req: IRequest, res: Response, next: NextFunction) {
+    try {
+      const { userId } = req.params;
+
+      const user = await this.userService.delete(Number(userId));
+
+      res.status(200).json({
+        status: "success",
+        data: { user },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 }

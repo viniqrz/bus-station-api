@@ -12,3 +12,11 @@ export type TripQueryDTO = {
   dateStart?: Date;
   dateEnd?: Date;
 };
+
+export type UpdateTripDTO = {
+  from?: string;
+  to?: string;
+  date?: Date;
+  seats?: number;
+  companyId?: number;
+};

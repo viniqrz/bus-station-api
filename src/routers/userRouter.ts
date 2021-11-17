@@ -1,18 +1,29 @@
-import { Router } from 'express';
-import Container from 'typedi';
+import { Router } from "express";
+import { ensureIsColleagueOrAdmin } from "middlewares/ensureIsColleague";
+import { ensureIsOwner } from "middlewares/ensureIsOwner";
+import { ensureIsPassenger } from "middlewares/ensureIsPassenger";
+import Container from "typedi";
 const router = Router();
-import { UserController  } from '../controllers/UserController';
+import { UserController } from "../controllers/UserController";
+import { ensureIsAdmin } from "../middlewares/ensureIsAdmin";
 
 const getController = (): UserController => {
-  return Container.get<UserController>('UserController');
+  return Container.get<UserController>("UserController");
 };
 
 const crateRouter = () => {
-  router.get('', (req, res) => getController().list(req, res));
-  router.post('', (req, res) => getController().create(req, res));
-  router.get('/:id', (req, res) => getController().get(req, res));
-  router.patch('/:id', (req, res) => getController().update(req, res));
-  router.delete('/:id', (req, res) => getController().remove(req, res));
+  const controller = getController();
+
+  router.post("", controller.createPassenger);
+  router.get("", ensureIsAdmin, controller.getAll);
+  router.get("/:id", controller.getById);
+  router.patch("/:id", ensureIsPassenger, ensureIsOwner, controller.update);
+  router.delete("/:id", ensureIsAdmin, controller.delete);
+
+  router.post("/authenticate", controller.authenticate);
+
+  router.post("/employee", ensureIsColleagueOrAdmin, controller.createEmployee);
+  router.post("/admin", ensureIsAdmin, controller.createAdmin);
 
   return router;
 };

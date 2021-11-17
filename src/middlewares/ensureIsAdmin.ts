@@ -3,7 +3,11 @@ import { verifyJwt } from "helpers/verifyJwt";
 import { JwtPayload } from "jsonwebtoken";
 import { IRequest } from "../@types/express/request";
 
-export function ensureIsAuth(req: IRequest, res: Response, next: NextFunction) {
+export function ensureIsAdmin(
+  req: IRequest,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const bearer = req.headers.authorization;
 
