@@ -1,7 +1,6 @@
-import Container, { Inject, Service } from "typedi";
-import { NextFunction, Request, Response } from "express";
+import { Inject, Service } from "typedi";
+import { NextFunction, Response } from "express";
 import { IUserService } from "../@types/services/IUserService";
-import { UserService } from "services/UserService";
 import { IRequest } from "../@types/express/request";
 
 @Service("UserController")

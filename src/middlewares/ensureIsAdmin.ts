@@ -1,6 +1,4 @@
 import { NextFunction, Response } from "express";
-import { verifyJwt } from "helpers/verifyJwt";
-import { JwtPayload } from "jsonwebtoken";
 import { IRequest } from "../@types/express/request";
 
 export function ensureIsAdmin(
@@ -9,15 +7,6 @@ export function ensureIsAdmin(
   next: NextFunction
 ) {
   try {
-    const bearer = req.headers.authorization;
-
-    if (!bearer) throw new Error("No token sent");
-
-    const [, token] = bearer.split(" ");
-
-    const { data } = verifyJwt(token) as JwtPayload;
-    req.user = data;
-
     const isAdmin = req.user.role === "admin";
     if (!isAdmin) throw new Error("User is not admin");
 
