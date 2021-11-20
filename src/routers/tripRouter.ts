@@ -2,8 +2,9 @@ import Container from "typedi";
 
 import { TripController } from "controllers/TripController";
 import { ensureIsUser } from "../middlewares/ensureIsUser";
-import { Router } from "express";
 import { ensureIsEmployee } from "middlewares/ensureIsEmployee";
+import { Router } from "express";
+import { ensureIsEmployeeOfCompany } from "middlewares/ensureIsEmployeeOfCompany";
 
 const router = Router();
 
@@ -14,7 +15,7 @@ const getController = (): TripController => {
 const createRouter = () => {
   const controller = getController();
 
-  router.post("", ensureIsUser, ensureIsEmployee, controller.create);
+  router.post("", ensureIsUser, ensureIsEmployeeOfCompany, controller.create);
   router.get("", ensureIsUser, controller.getAll);
   router.get("/:id", ensureIsUser, controller.getById);
   router.patch("/:id", ensureIsUser, ensureIsEmployee, controller.update);

@@ -11,7 +11,7 @@ const getController = (): CompanyController => {
   return Container.get<CompanyController>("CompanyController");
 };
 
-const crateRouter = () => {
+const createRouter = () => {
   const controller = getController();
 
   router.post("", ensureIsUser, ensureIsAdmin, controller.create);
@@ -23,4 +23,4 @@ const crateRouter = () => {
   return router;
 };
 
-export default crateRouter;
+export default createRouter;
