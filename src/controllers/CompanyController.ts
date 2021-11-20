@@ -7,11 +7,17 @@ import { IRequest } from "../@types/express/request";
 export class CompanyController {
   constructor(
     @Inject("CompanyService") private companyService: ICompanyService
-  ) {}
+  ) {
+    this.create = this.create.bind(this);
+    this.getAll = this.getAll.bind(this);
+    this.getById = this.getById.bind(this);
+    this.update = this.update.bind(this);
+    this.delete = this.delete.bind(this);
+  }
 
   public async create(req: IRequest, res: Response, next: NextFunction) {
     try {
-      const { company } = req.body;
+      const company = req.body;
 
       const savedCompany = await this.companyService.create(company);
 
@@ -41,9 +47,9 @@ export class CompanyController {
 
   public async getById(req: IRequest, res: Response, next: NextFunction) {
     try {
-      const { companyId } = req.params;
+      const { id } = req.params;
 
-      const company = await this.companyService.getById(Number(companyId));
+      const company = await this.companyService.getById(Number(id));
 
       res.status(200).json({
         status: "success",
@@ -58,13 +64,11 @@ export class CompanyController {
 
   public async update(req: IRequest, res: Response, next: NextFunction) {
     try {
-      const { companyId } = req.params;
+      const { id } = req.params;
 
-      const {
-        company: { name },
-      } = req.body;
+      const name = req.body.name;
 
-      const company = await this.companyService.update(Number(companyId), name);
+      const company = await this.companyService.update(Number(id), name);
 
       res.status(200).json({
         status: "success",
@@ -79,9 +83,9 @@ export class CompanyController {
 
   public async delete(req: IRequest, res: Response, next: NextFunction) {
     try {
-      const { companyId } = req.params;
+      const { id } = req.params;
 
-      const company = await this.companyService.delete(Number(companyId));
+      const company = await this.companyService.delete(Number(id));
 
       res.status(200).json({
         status: "success",
