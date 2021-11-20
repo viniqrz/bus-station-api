@@ -1,15 +1,23 @@
 import { NextFunction, Response } from "express";
 import { Inject, Service } from "typedi";
-import { ITripService } from "services/TripService";
+import { ITripService } from "../services/TripService";
 import { IRequest } from "../@types/express/request";
 
 @Service("TripController")
 export class TripController {
-  constructor(@Inject("TripService") private tripService: ITripService) {}
+  constructor(@Inject("TripService") private tripService: ITripService) {
+    this.create = this.create.bind(this);
+    this.getAll = this.getAll.bind(this);
+    this.getById = this.getById.bind(this);
+    this.update = this.update.bind(this);
+    this.delete = this.delete.bind(this);
+    this.bookSeatByEmployee = this.bookSeatByEmployee.bind(this);
+    this.bookSeatByPassenger = this.bookSeatByPassenger.bind(this);
+  }
 
   public async create(req: IRequest, res: Response, next: NextFunction) {
     try {
-      const { trip } = req.body;
+      const trip = req.body;
 
       const savedTrip = await this.tripService.create(trip);
 
@@ -41,9 +49,9 @@ export class TripController {
 
   public async getById(req: IRequest, res: Response, next: NextFunction) {
     try {
-      const { tripId } = req.params;
+      const { id } = req.params;
 
-      const savedTrip = await this.tripService.getById(Number(tripId));
+      const savedTrip = await this.tripService.getById(Number(id));
 
       res.status(200).json({
         status: "success",
@@ -58,10 +66,10 @@ export class TripController {
 
   public async update(req: IRequest, res: Response, next: NextFunction) {
     try {
-      const { tripId } = req.params;
-      const { trip } = req.body;
+      const { id } = req.params;
+      const trip = req.body;
 
-      const updatedTrip = await this.tripService.update(Number(tripId), trip);
+      const updatedTrip = await this.tripService.update(Number(id), trip);
 
       res.status(200).json({
         status: "success",
@@ -76,9 +84,9 @@ export class TripController {
 
   public async delete(req: IRequest, res: Response, next: NextFunction) {
     try {
-      const { tripId } = req.params;
+      const { id } = req.params;
 
-      const trip = await this.tripService.delete(Number(tripId));
+      const trip = await this.tripService.delete(Number(id));
 
       res.status(200).json({
         status: "success",
@@ -99,11 +107,11 @@ export class TripController {
     try {
       const {
         user,
-        params: { tripId },
+        params: { id },
       } = req;
 
-      const savedTrip = this.tripService.bookSeat(
-        Number(tripId),
+      const savedTrip = await this.tripService.bookSeat(
+        Number(id),
         Number(user.id)
       );
 
@@ -124,11 +132,11 @@ export class TripController {
     next: NextFunction
   ) {
     try {
-      const { trip_id } = req.query;
+      const { id } = req.params;
       const { user_id } = req.body;
 
-      const savedTrip = this.tripService.bookSeat(
-        Number(trip_id),
+      const savedTrip = await this.tripService.bookSeat(
+        Number(id),
         Number(user_id),
         req.user.company.id
       );

@@ -7,8 +7,9 @@ export function ensureIsOwner(
   next: NextFunction
 ) {
   try {
-    const { userId } = req.params;
-    if (Number(userId) !== req.user.id) throw new Error("Not owner");
+    const { id } = req.params;
+
+    if (Number(id) !== req.user.id) throw new Error("Not owner");
 
     next();
   } catch (err) {

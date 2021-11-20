@@ -15,7 +15,7 @@ export function ensureIsEmployeeOfCompany(
     const isEmployee = role === "employee";
     if (!isEmployee) throw new Error("You are not an employee");
 
-    const { companyId } = req.body.trip;
+    const { companyId } = req.body;
 
     if (companyId !== id) throw new Error("You don't work for this company");
 

@@ -32,7 +32,7 @@ export class Trip {
   @ManyToOne(() => Company, (company) => company.trips)
   company: Company;
 
-  @ManyToMany(() => User, (user) => user.trips, { cascade: true })
+  @ManyToMany(() => User, (user) => user.trips)
   @JoinTable()
   users: User[];
 }

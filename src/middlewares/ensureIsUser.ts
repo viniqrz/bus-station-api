@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { verifyJwt } from "helpers/verifyJwt";
+import { verifyJwt } from "../helpers/verifyJwt";
 import { JwtPayload } from "jsonwebtoken";
 import { IRequest } from "../@types/express/request";
 

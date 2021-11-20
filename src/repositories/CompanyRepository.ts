@@ -1,4 +1,4 @@
-import { Company } from "models/CompanyEntity";
+import { Company } from "../models/CompanyEntity";
 import { EntityRepository, Repository } from "typeorm";
 
 export interface ICompanyRepository {

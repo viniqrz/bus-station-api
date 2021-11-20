@@ -1,6 +1,6 @@
 import Container from "typedi";
 
-import { CompanyController } from "controllers/CompanyController";
+import { CompanyController } from "../controllers/CompanyController";
 import { Router } from "express";
 import { ensureIsUser } from "../middlewares/ensureIsUser";
 import { ensureIsAdmin } from "../middlewares/ensureIsAdmin";

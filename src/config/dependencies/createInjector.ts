@@ -5,17 +5,18 @@ import { UserRepository } from "../../repositories/UserRepository";
 // inicializador de dependências:
 // inicializa controllers
 import "../../controllers/UserController";
-import "../../controllers/EnderecoController";
+import "../../controllers/CompanyController";
+import "../../controllers/TripController";
 
 // inicializa services
 import "../../services/UserService";
-import "../../services/EnderecoService";
+import "../../services/CompanyService";
+import "../../services/TripService";
 
 // inicializa clientes
-import "../../clients/CepClient";
 import "../../infra/http/AxiosHttpClient";
-import { CompanyRepository } from "repositories/CompanyRepository";
-import { TripRepository } from "repositories/TripRepository";
+import { CompanyRepository } from "../../repositories/CompanyRepository";
+import { TripRepository } from "../../repositories/TripRepository";
 
 const createDependencyInjector = () => {
   Container.set("UserRepository", getCustomRepository(UserRepository));

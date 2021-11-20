@@ -1,10 +1,10 @@
 import { TripDTO, TripQueryDTO, UpdateTripDTO } from "../@types/dto/TripDto";
-import { Trip } from "models/TripEntity";
-import { ITripRepository } from "repositories/TripRepository";
+import { Trip } from "../models/TripEntity";
+import { ITripRepository } from "../repositories/TripRepository";
 import Container, { Inject, Service } from "typedi";
 import { UserService } from "./UserService";
-import { Company } from "models/CompanyEntity";
-import { User } from "models/UserEntity";
+import { Company } from "../models/CompanyEntity";
+import { User } from "../models/UserEntity";
 
 export interface ITripService {
   create(tripDto: TripDTO): Promise<Trip>;
@@ -36,7 +36,10 @@ export class TripService implements ITripService {
       const userService = Container.get<UserService>("UserService");
 
       const trip = await this.getById(tripId);
+
       if (trip.seatsLeft === 0) throw new Error("No seats left");
+
+      console.log(trip);
 
       if (companyId && companyId !== trip.company.id)
         throw new Error("No access to company tickets");

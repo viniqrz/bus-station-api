@@ -1,7 +1,6 @@
-import { Company } from "models/CompanyEntity";
+import { Company } from "../../models/CompanyEntity";
 
 export interface UserDTO {
-  id: number;
   email: string;
   password: string;
   firstName: string;

@@ -1,10 +1,10 @@
 import Container from "typedi";
 
-import { TripController } from "controllers/TripController";
+import { TripController } from "../controllers/TripController";
 import { ensureIsUser } from "../middlewares/ensureIsUser";
-import { ensureIsEmployee } from "middlewares/ensureIsEmployee";
+import { ensureIsEmployee } from "../middlewares/ensureIsEmployee";
 import { Router } from "express";
-import { ensureIsEmployeeOfCompany } from "middlewares/ensureIsEmployeeOfCompany";
+import { ensureIsEmployeeOfCompany } from "../middlewares/ensureIsEmployeeOfCompany";
 
 const router = Router();
 

@@ -1,5 +1,5 @@
 import { TripQueryDTO } from "../@types/dto/TripDto";
-import { Trip } from "models/TripEntity";
+import { Trip } from "../models/TripEntity";
 import { Between, EntityRepository, Repository } from "typeorm";
 
 export interface ITripRepository {
@@ -21,13 +21,18 @@ export class TripRepository
       query["date"] = Between(queryObj.dateStart, queryObj.dateEnd);
     }
 
-    if ("from" in queryObj) query["from"] = queryObj.dateStart;
-    if ("to" in queryObj) query["to"] = queryObj.dateStart;
+    if ("from" in queryObj) query["from"] = queryObj.from;
+    if ("to" in queryObj) query["to"] = queryObj.to;
+
+    console.log(query);
 
     return await this.find({ where: query });
   }
 
   public async findById(id: number): Promise<Trip> {
-    return await this.findOne({ where: { id }, relations: ["passengers"] });
+    return await this.findOne({
+      where: { id },
+      relations: ["users", "company"],
+    });
   }
 }

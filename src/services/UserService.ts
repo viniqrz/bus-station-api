@@ -3,9 +3,10 @@ import { UserDTO, UserWithoutPassword } from "../@types/dto/UserDto";
 import { IUserService } from "../@types/services/IUserService";
 import Container, { Inject, Service } from "typedi";
 import { CompanyService } from "./CompanyService";
-import { generateJwt } from "helpers/generateJwt";
-import { User } from "models/UserEntity";
+import { generateJwt } from "../helpers/generateJwt";
+import { User } from "../models/UserEntity";
 import { compare, hash } from "bcrypt";
+import { createHash } from "crypto";
 
 @Service("UserService")
 export class UserService implements IUserService {
@@ -30,8 +31,11 @@ export class UserService implements IUserService {
   public async createEmployee(userDto: UserDTO): Promise<UserWithoutPassword> {
     try {
       const isEmployee = userDto.role === "employee";
+      const hasCompany = typeof userDto.companyId === "number";
 
       if (!isEmployee) throw new Error("user sent is not employee");
+
+      if (!hasCompany) throw new Error("user sent has no company");
 
       return await this.signup(userDto);
     } catch (err) {
@@ -102,21 +106,32 @@ export class UserService implements IUserService {
     return this.userRepository.save(userDto);
   }
 
-  public async update(id: number, userDto: UserDTO) {
-    await this.userRepository.save({ ...userDto, id });
-  }
-
-  public async delete(id: number) {
-    const userToRemove = await this.userRepository.findOne(id);
-
-    if (!userToRemove) {
-      throw new Error("User not found!");
+  public async update(
+    id: number,
+    userDto: UserDTO
+  ): Promise<UserWithoutPassword> {
+    if ("password" in userDto) {
+      userDto.password = await hash(userDto.password, 8);
     }
 
-    await this.userRepository.remove(userToRemove);
+    const user = await this.userRepository.save({ ...userDto, id } as User);
+
+    return this.omitPassword(user);
+  }
+
+  public async delete(id: number): Promise<User> {
+    return await this.userRepository.remove({ id } as User);
+
+    // if (!userToRemove) {
+    //   throw new Error("User not found!");
+    // }
+
+    // await this.userRepository.remove(userToRemove);
   }
 
   private omitPassword(user: User): UserWithoutPassword {
+    if (!user) return null;
+
     const { password, ...userWithoutPassword } = user;
 
     return userWithoutPassword;
@@ -130,11 +145,16 @@ export class UserService implements IUserService {
     user.email = userDto.email;
     user.password = userDto.password;
     user.company = null;
+    user.role = userDto.role;
 
     if (userDto.role === "employee") {
       const companyService = Container.get<CompanyService>("CompanyService");
 
-      user.company = await companyService.getById(userDto.companyId);
+      const company = await companyService.getById(userDto.companyId);
+
+      if (!company) throw new Error("Company doesnt exist");
+
+      user.company = company;
     }
 
     return user;

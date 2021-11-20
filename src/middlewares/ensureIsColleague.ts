@@ -12,7 +12,7 @@ export function ensureIsColleagueOrAdmin(
 
     if (!isEmployee && !isAdmin) throw new Error("You arent employee or admin");
 
-    const { user } = req.body;
+    const user = req.body;
 
     if (isEmployee) {
       const isColleague = user.companyId === req.user.company.id;

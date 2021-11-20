@@ -5,6 +5,6 @@ export interface IUserRepository {
   find(): Promise<User[]>;
   findOne(id: number): Promise<User>;
   save(userDto: UserDTO): Promise<User>;
-  remove(entities: User | User[]): Promise<User[]>;
+  remove(entity: User): Promise<User>;
   findByEmail(email: string): Promise<User>;
 }

@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { ICompanyService } from "services/CompanyService";
+import { ICompanyService } from "../services/CompanyService";
 import { Inject, Service } from "typedi";
 import { IRequest } from "../@types/express/request";
 

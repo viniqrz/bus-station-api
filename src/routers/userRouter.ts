@@ -1,6 +1,6 @@
 import Container from "typedi";
 
-import { ensureIsColleagueOrAdmin } from "middlewares/ensureIsColleague";
+import { ensureIsColleagueOrAdmin } from "../middlewares/ensureIsColleague";
 import { ensureIsOwner } from "../middlewares/ensureIsOwner";
 import { ensureIsUser } from "../middlewares/ensureIsUser";
 import { UserController } from "../controllers/UserController";
